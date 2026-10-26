@@ -1,30 +1,15 @@
-# Nidra Sleep
+# Sleep
 
-A simple, private sleep tracker for Android. Dark UI with bold bars so you can see your sleep per **day**, **week** and **month** (with previous-period navigation).
+A simple Android sleep tracker.
 
-## Features
-- Log bedtime, wake time, quality (1–5 stars) and an optional note
-- Day view: hours vs goal plus a bedtime-to-wake timeline
-- Week and month bar charts coloured by goal (met / close / short), tap a bar for details
-- Sleep score, goal-met count and a quality mix bar
-- 7-day sleep debt, bedtime consistency, average bed/wake times, goal streak
-- Personalised tips, history list, adjustable sleep goal
-- JSON export; demo data for trying it out
-- 100% on-device storage, nothing is uploaded
+- Slide from bedtime to wake-up time and tap **OK**. One entry per night.
+- Use the arrows to log or fix earlier nights, or tap a bar to jump to that night.
+- **Week** and **Month** bar charts with a goal line and previous-period navigation.
+- Average sleep, average bedtime and average wake-up time for the period shown.
+- Adjustable nightly goal (gear icon).
+- All data stays on the phone.
 
-## Get the APK
-Every push to `main` or `sleep-tracker` builds the app on GitHub Actions. Open the **Releases** page of this repo on your phone and download `nidra-sleep.apk`, then allow "install unknown apps" for your browser when asked.
+Why only bedtime and wake-up time: these are the core of the clinical Consensus Sleep Diary, and research suggests a regular schedule matters as much as total hours.
 
-## Run in a browser
-```
-npm start
-```
-
-## Build locally
-Requires Node 20, JDK 17 and the Android SDK:
-```
-npm install
-npx cap add android
-npx cap sync android
-cd android && ./gradlew assembleDebug
-```
+## APK
+Every push to the `sleep-tracker` branch builds `sleep.apk` on GitHub Actions and attaches it to a release.

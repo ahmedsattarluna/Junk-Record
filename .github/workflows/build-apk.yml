@@ -2,7 +2,7 @@ name: Build APK
 
 on:
   push:
-    branches: [main, sleep-tracker]
+    branches: [sleep-tracker]
   workflow_dispatch:
 
 permissions:
@@ -29,29 +29,30 @@ jobs:
       - name: Add Android platform
         run: npx cap add android
 
-      - name: Dark theme and edge-to-edge colours
+      - name: Apply icon, theme colours and signing key
         run: |
-          STYLES=android/app/src/main/res/values/styles.xml
-          sed -i 's|<item name="android:background">@null</item>|<item name="android:background">#0E0B1A</item>\n        <item name="android:statusBarColor">#0E0B1A</item>\n        <item name="android:navigationBarColor">#0E0B1A</item>|' "$STYLES" || true
+          cp -r resources/android/res/. android/app/src/main/res/
+          mkdir -p ~/.android
+          cp resources/sleep.keystore ~/.android/debug.keystore
 
       - name: Sync web assets
         run: npx cap sync android
 
-      - name: Build debug APK
+      - name: Build APK
         working-directory: android
         run: ./gradlew assembleDebug --no-daemon
 
       - name: Rename APK
-        run: cp android/app/build/outputs/apk/debug/app-debug.apk nidra-sleep.apk
+        run: cp android/app/build/outputs/apk/debug/app-debug.apk sleep.apk
 
       - uses: actions/upload-artifact@v4
         with:
-          name: nidra-sleep-apk
-          path: nidra-sleep.apk
+          name: sleep-apk
+          path: sleep.apk
 
       - name: Publish release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: sleep-v${{ github.run_number }}
-          name: Nidra Sleep v${{ github.run_number }}
-          files: nidra-sleep.apk
+          name: Sleep v${{ github.run_number }}
+          files: sleep.apk

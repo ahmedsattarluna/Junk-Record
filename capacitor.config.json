@@ -1,9 +1,9 @@
 {
-  "appId": "com.nidra.sleeptracker",
-  "appName": "Nidra Sleep",
+  "appId": "com.ahmed.sleep",
+  "appName": "Sleep",
   "webDir": "www",
-  "backgroundColor": "#0E0B1A",
+  "backgroundColor": "#0B0F1E",
   "android": {
-    "backgroundColor": "#0E0B1A"
+    "backgroundColor": "#0B0F1E"
   }
 }
