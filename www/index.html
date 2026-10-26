@@ -1,0 +1,402 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#0E0B1A">
+<title>Nidra Sleep</title>
+<style>
+:root{
+  --bg:#0E0B1A; --card:#181330; --card2:#221A44; --line:#2B2354;
+  --text:#F5F2FF; --muted:#9C93C4;
+  --violet:#7C4DFF; --pink:#FF4FA3; --mint:#2EE6A6; --amber:#FFB020; --cyan:#28C7FA;
+  --hero:linear-gradient(135deg,#7C4DFF 0%,#B24DFF 45%,#FF4FA3 100%);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+body{padding-top:max(env(safe-area-inset-top),28px);padding-bottom:calc(84px + env(safe-area-inset-bottom))}
+#app{max-width:520px;margin:0 auto;padding:0 20px}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+.top{display:flex;align-items:center;justify-content:space-between;margin:10px 0 18px}
+.brand{display:flex;align-items:center;gap:12px;font-size:30px;font-weight:800;letter-spacing:-.5px}
+.logo{width:46px;height:46px;border-radius:14px;background:var(--hero);display:grid;place-items:center;font-size:24px}
+.iconbtn{width:46px;height:46px;border-radius:14px;background:var(--card);display:grid;place-items:center;font-size:20px}
+.hero{background:var(--hero);border-radius:30px;padding:24px;color:#fff;box-shadow:0 14px 40px rgba(124,77,255,.35)}
+.hero .lbl{font-size:16px;opacity:.85;font-weight:600}
+.hero .big{font-size:54px;font-weight:800;letter-spacing:-2px;margin:2px 0 14px;line-height:1.05}
+.hero .big small{font-size:26px;font-weight:700;letter-spacing:0;opacity:.9}
+.hero .row{display:flex;gap:28px}
+.hero .row div span{display:block;font-size:14px;opacity:.8;font-weight:600}
+.hero .row div b{font-size:22px}
+.pill{display:inline-block;margin-top:16px;background:rgba(255,255,255,.2);padding:9px 16px;border-radius:99px;font-weight:700;font-size:15px}
+.hero .foot{margin-top:16px;padding-top:14px;border-top:2px dashed rgba(255,255,255,.35);display:flex;justify-content:space-between;font-weight:700;font-size:15px}
+.seg{display:flex;background:var(--card);border-radius:18px;padding:5px;margin:22px 0 6px}
+.seg button{flex:1;padding:12px 0;border-radius:14px;font-weight:700;color:var(--muted)}
+.seg button.on{background:var(--violet);color:#fff;box-shadow:0 6px 18px rgba(124,77,255,.45)}
+.nav{display:flex;align-items:center;justify-content:space-between;margin:14px 0 4px}
+.nav b{font-size:20px}
+.nav button{width:40px;height:40px;border-radius:12px;background:var(--card);font-size:18px}
+.nav button:disabled{opacity:.25}
+h2{font-size:22px;margin:26px 0 12px;display:flex;justify-content:space-between;align-items:baseline}
+h2 small{font-size:14px;color:var(--muted);font-weight:500}
+.card{background:var(--card);border-radius:24px;padding:18px}
+.chart{display:flex;align-items:flex-end;gap:8px;height:190px;position:relative;padding-top:10px}
+.chart.month{gap:3px}
+.goal{position:absolute;left:0;right:0;border-top:2px dashed rgba(255,255,255,.28);pointer-events:none}
+.goal i{position:absolute;right:0;top:-19px;font-style:normal;font-size:11px;color:var(--muted)}
+.col{flex:1;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:6px;min-width:0}
+.bw{flex:1;width:100%;display:flex;align-items:flex-end}
+.bar{width:100%;border-radius:10px;min-height:4px;transition:height .5s cubic-bezier(.2,.8,.2,1)}
+.month .bar{border-radius:4px}
+.bar.g{background:linear-gradient(180deg,var(--mint),var(--cyan))}
+.bar.o{background:linear-gradient(180deg,#FFD54A,var(--amber))}
+.bar.l{background:linear-gradient(180deg,var(--pink),var(--violet))}
+.bar.n{background:var(--card2)}
+.col.sel .bar{outline:2px solid #fff;outline-offset:2px}
+.lab{font-size:12px;color:var(--muted);height:14px;white-space:nowrap}
+.col.sel .lab{color:#fff;font-weight:700}
+.legend{display:flex;gap:16px;margin-top:14px;font-size:13px;color:var(--muted)}
+.legend span:before{content:"";display:inline-block;width:10px;height:10px;border-radius:4px;margin-right:6px;vertical-align:-1px;background:var(--c)}
+.detail{margin-top:14px;padding-top:14px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}
+.detail b{font-size:20px}
+.detail span{color:var(--muted);font-size:14px}
+.segbar{height:16px;border-radius:99px;overflow:hidden;display:flex;gap:3px;background:var(--card2)}
+.segbar i{display:block;height:100%}
+.leg2{display:grid;grid-template-columns:1fr 1fr;gap:10px 18px;margin-top:14px;font-size:15px}
+.leg2 div{display:flex;align-items:center;gap:8px;color:var(--muted)}
+.leg2 div:before{content:"";width:10px;height:10px;border-radius:4px;background:var(--c)}
+.leg2 b{margin-left:auto;color:var(--text)}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.tile{border-radius:22px;padding:16px;background:var(--card)}
+.tile span{display:block;color:var(--muted);font-size:13px;font-weight:600}
+.tile b{display:block;font-size:26px;margin-top:6px;letter-spacing:-.5px}
+.tile em{font-style:normal;font-size:13px;color:var(--muted)}
+.tile.a{background:linear-gradient(135deg,#1F3B6E,#1A5C8C)}
+.tile.b{background:linear-gradient(135deg,#5A1F5E,#8C1A5C)}
+.tile.c{background:linear-gradient(135deg,#0F5C4C,#1A7A5E)}
+.tile.d{background:linear-gradient(135deg,#6E4A12,#8C5C1A)}
+.timeline{position:relative;height:22px;border-radius:99px;background:var(--card2);margin:18px 0 6px;overflow:hidden}
+.timeline i{position:absolute;top:0;bottom:0;border-radius:99px;background:linear-gradient(90deg,var(--cyan),var(--violet),var(--pink))}
+.ticks{display:flex;justify-content:space-between;font-size:12px;color:var(--muted)}
+.list .item{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid var(--line)}
+.list .item:last-child{border:0}
+.badge{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;font-weight:800;color:#0E0B1A}
+.list .t{flex:1;min-width:0}
+.list .t b{display:block;font-size:17px}
+.list .t span{color:var(--muted);font-size:14px}
+.del{color:var(--pink);font-size:20px;padding:8px}
+.tip{display:flex;gap:12px;padding:14px;border-radius:18px;background:var(--card2);margin-bottom:10px;font-size:15px;line-height:1.4}
+.tip s{text-decoration:none;font-size:22px}
+.empty{text-align:center;color:var(--muted);padding:30px 10px}
+.fab{position:fixed;right:18px;bottom:calc(88px + env(safe-area-inset-bottom));background:var(--hero);color:#fff;font-weight:700;font-size:34px;line-height:1;width:58px;height:58px;border-radius:20px;box-shadow:0 10px 30px rgba(255,79,163,.45);z-index:5}
+.tabs{position:fixed;left:0;right:0;bottom:0;background:rgba(14,11,26,.96);backdrop-filter:blur(10px);border-top:1px solid var(--line);display:flex;justify-content:space-around;padding:10px 6px calc(10px + env(safe-area-inset-bottom));z-index:6}
+.tabs button{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:13px;color:var(--muted);padding:6px 16px;border-radius:16px;font-weight:600}
+.tabs button span{font-size:22px}
+.tabs button.on{color:#fff;background:rgba(124,77,255,.28)}
+.sheet-bg{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:10;display:flex;align-items:flex-end}
+.sheet{width:100%;max-width:520px;margin:0 auto;background:var(--card);border-radius:30px 30px 0 0;padding:22px 20px calc(24px + env(safe-area-inset-bottom));max-height:92vh;overflow:auto}
+.sheet h3{margin:0 0 16px;font-size:22px}
+.field{margin-bottom:16px}
+.field label{display:block;color:var(--muted);font-size:13px;font-weight:700;margin-bottom:7px}
+.field input,.field textarea{width:100%;background:var(--card2);border:2px solid transparent;color:var(--text);border-radius:16px;padding:14px;font:inherit;font-size:18px;outline:none;color-scheme:dark}
+.field input:focus,.field textarea:focus{border-color:var(--violet)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.stars{display:flex;gap:8px}
+.stars button{flex:1;padding:13px 0;border-radius:14px;background:var(--card2);font-size:22px;filter:grayscale(1);opacity:.55}
+.stars button.on{filter:none;opacity:1;background:var(--violet)}
+.go{width:100%;background:var(--hero);color:#fff;font-weight:800;font-size:18px;padding:17px;border-radius:20px;margin-top:6px}
+.ghost{width:100%;padding:15px;border-radius:18px;background:var(--card2);font-weight:700;margin-top:10px}
+.ghost.red{color:var(--pink)}
+.preview{text-align:center;font-weight:700;color:var(--mint);margin:-4px 0 14px}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<button class="fab" id="fab" aria-label="Log sleep">+</button>
+<div class="tabs" id="tabs"></div>
+<div id="modal"></div>
+
+<script>
+"use strict";
+/* ---------- storage ---------- */
+const KEY = "nidra_sleep_v1";
+let S = { entries: [], goal: 8 };
+try { const r = JSON.parse(localStorage.getItem(KEY)); if (r && Array.isArray(r.entries)) S = r; } catch (e) {}
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} };
+
+/* ---------- helpers ---------- */
+const $ = s => document.querySelector(s);
+const pad = n => String(n).padStart(2, "0");
+const dkey = d => d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate());
+const fromKey = k => { const [y, m, d] = k.split("-").map(Number); return new Date(y, m - 1, d); };
+const addDays = (d, n) => { const x = new Date(d); x.setDate(x.getDate() + n); return x; };
+const today = () => { const d = new Date(); d.setHours(0, 0, 0, 0); return d; };
+const MON = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const DOW = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+const mins = e => Math.round((e.wake - e.bed) / 60000);
+const fmtD = m => { m = Math.round(m); if (m <= 0) return "0h"; const h = Math.floor(m / 60), r = m % 60; return h + "h" + (r ? " " + pad(r) + "m" : ""); };
+const fmtT = ts => { const d = new Date(ts); let h = d.getHours(); const ap = h >= 12 ? "PM" : "AM"; h = h % 12 || 12; return h + ":" + pad(d.getMinutes()) + " " + ap; };
+const goalM = () => S.goal * 60;
+
+function byDay(k) { return S.entries.filter(e => e.day === k).sort((a, b) => a.bed - b.bed); }
+function totalDay(k) { return byDay(k).reduce((s, e) => s + mins(e), 0); }
+function qualDay(k) { const l = byDay(k); return l.length ? l.reduce((s, e) => s + e.q, 0) / l.length : 0; }
+function cls(m) { if (!m) return "n"; const g = goalM(); return m >= g * .95 ? "g" : m >= g * .8 ? "o" : "l"; }
+function score(m, q) { if (!m) return 0; return Math.round(Math.min(m / goalM(), 1) * 70 + (q / 5) * 30); }
+function rangeKeys(a, b) { const out = []; for (let d = new Date(a); d <= b; d = addDays(d, 1)) out.push(dkey(d)); return out; }
+
+/* bedtime as minutes after 6 PM so midnight doesn't wrap */
+const bedRel = ts => { const d = new Date(ts); return ((d.getHours() * 60 + d.getMinutes()) - 1080 + 1440) % 1440; };
+const relToClock = r => { const m = (r + 1080) % 1440; let h = Math.floor(m / 60); const ap = h >= 12 ? "PM" : "AM"; h = h % 12 || 12; return h + ":" + pad(m % 60) + " " + ap; };
+function avgBed(list) { return list.length ? list.reduce((s, e) => s + bedRel(e.bed), 0) / list.length : null; }
+function wakeAbs(ts) { const d = new Date(ts); return d.getHours() * 60 + d.getMinutes(); }
+function avgWake(list) { return list.length ? list.reduce((s, e) => s + wakeAbs(e.wake), 0) / list.length : null; }
+function clock(m) { m = Math.round(m) % 1440; let h = Math.floor(m / 60); const ap = h >= 12 ? "PM" : "AM"; h = h % 12 || 12; return h + ":" + pad(m % 60) + " " + ap; }
+function stdBed(list) {
+  if (list.length < 2) return null;
+  const v = list.map(e => bedRel(e.bed)), mu = v.reduce((a, b) => a + b, 0) / v.length;
+  return Math.sqrt(v.reduce((s, x) => s + (x - mu) ** 2, 0) / v.length);
+}
+
+/* sleep debt: last 7 days, shortfall vs goal */
+function debt() {
+  const t = today(); let d = 0, n = 0;
+  for (let i = 0; i < 7; i++) { const k = dkey(addDays(t, -i)), m = totalDay(k); if (m) { d += goalM() - m; n++; } }
+  return { mins: Math.max(0, d), nights: n };
+}
+function streak() {
+  let s = 0, d = today();
+  if (!totalDay(dkey(d))) d = addDays(d, -1);
+  while (totalDay(dkey(d)) >= goalM() * .95) { s++; d = addDays(d, -1); }
+  return s;
+}
+
+/* ---------- state ---------- */
+let page = "home", view = "week", off = 0, sel = null;
+
+/* ---------- period data ---------- */
+function period() {
+  const t = today();
+  if (view === "day") {
+    const d = addDays(t, off);
+    return { keys: [dkey(d)], title: off === 0 ? "Today" : off === -1 ? "Yesterday" : DOW[d.getDay()] + ", " + d.getDate() + " " + MON[d.getMonth()], max: off >= 0 };
+  }
+  if (view === "week") {
+    const start = addDays(t, -6 + off * 7), end = addDays(start, 6);
+    return { keys: rangeKeys(start, end), title: off === 0 ? "Last 7 days" : off === -1 ? "Previous 7 days" : start.getDate() + " " + MON[start.getMonth()] + " – " + end.getDate() + " " + MON[end.getMonth()], max: off >= 0 };
+  }
+  const first = new Date(t.getFullYear(), t.getMonth() + off, 1), last = new Date(first.getFullYear(), first.getMonth() + 1, 0);
+  return { keys: rangeKeys(first, last), title: off === 0 ? "This month" : off === -1 ? "Last month" : MON[first.getMonth()] + " " + first.getFullYear(), max: off >= 0 };
+}
+
+/* ---------- views ---------- */
+function homeHTML() {
+  const P = period(), tk = dkey(today());
+  const logged = P.keys.filter(k => totalDay(k) > 0 && k <= tk);
+  const tot = logged.reduce((s, k) => s + totalDay(k), 0);
+  const avg = logged.length ? tot / logged.length : 0;
+  const q = logged.length ? logged.reduce((s, k) => s + qualDay(k), 0) / logged.length : 0;
+  const met = logged.filter(k => totalDay(k) >= goalM() * .95).length;
+  const D = debt();
+  const lbl = view === "day" ? "Slept · " + P.title : "Average per night · " + P.title;
+  const bigM = avg;
+  const h = Math.floor(bigM / 60), r = Math.round(bigM % 60);
+  const sc = score(avg, q);
+  let H = `<div class="top"><div class="brand"><div class="logo">🌙</div>Nidra</div><button class="iconbtn" data-go="settings">⚙️</button></div>
+  <div class="hero"><div class="lbl">${lbl}</div>
+  <div class="big">${logged.length ? `${h}<small>h</small> ${pad(r)}<small>m</small>` : "—"}</div>
+  <div class="row"><div><span>Goal</span><b>${S.goal}h</b></div><div><span>Nights logged</span><b>${logged.length}</b></div><div><span>Sleep score</span><b>${logged.length ? sc : "–"}</b></div></div>
+  ${logged.length ? `<div class="pill">${avg >= goalM() * .95 ? "Right on target ✨" : "Short by " + fmtD(goalM() - avg) + " per night"}</div>` : `<div class="pill">Tap + to log your first night</div>`}
+  <div class="foot"><span>Goal met ${met}/${logged.length || 0}</span><span>7-day debt ${fmtD(D.mins)}</span></div></div>
+  <div class="seg">${["day", "week", "month"].map(v => `<button class="${view === v ? "on" : ""}" data-view="${v}">${v[0].toUpperCase() + v.slice(1)}</button>`).join("")}</div>
+  <div class="nav"><button data-off="-1">‹</button><b>${P.title}</b><button data-off="1" ${P.max ? "disabled" : ""}>›</button></div>`;
+  H += view === "day" ? dayCard(P.keys[0]) : barCard(P);
+  H += `<h2>Quality mix <small>${P.title}</small></h2><div class="card">${qualityMix(P.keys)}</div>`;
+  return H;
+}
+
+function dayCard(k) {
+  const list = byDay(k), m = totalDay(k), g = goalM();
+  if (!list.length) return `<div class="card empty" style="margin-top:12px">No sleep logged for this day.<br>Tap + to add it.</div>`;
+  const pct = Math.min(100, m / g * 100);
+  let tl = "";
+  list.forEach(e => {
+    const b = bedRel(e.bed), w = b + mins(e), a = Math.max(0, b), z = Math.min(1080, w);
+    tl += `<i style="left:${a / 1080 * 100}%;width:${Math.max(2, (z - a) / 1080 * 100)}%"></i>`;
+  });
+  return `<div class="card" style="margin-top:12px">
+    <div style="display:flex;justify-content:space-between;align-items:baseline"><b style="font-size:30px">${fmtD(m)}</b><span style="color:var(--muted)">of ${S.goal}h goal</span></div>
+    <div class="segbar" style="margin-top:12px"><i class="bar ${cls(m)}" style="width:${pct}%;border-radius:99px"></i></div>
+    <div class="timeline">${tl}</div>
+    <div class="ticks"><span>6 PM</span><span>10 PM</span><span>2 AM</span><span>6 AM</span><span>10 AM</span><span>12 PM</span></div>
+    ${list.map(e => `<div class="detail"><div><b>${fmtT(e.bed)} → ${fmtT(e.wake)}</b><br><span>${fmtD(mins(e))} · ${"★".repeat(e.q)}${"☆".repeat(5 - e.q)}${e.note ? " · " + esc(e.note) : ""}</span></div><button class="del" data-del="${e.id}">🗑</button></div>`).join("")}
+  </div>`;
+}
+
+function barCard(P) {
+  const tk = dkey(today()), g = goalM();
+  const vals = P.keys.map(k => totalDay(k));
+  const mx = Math.max(10 * 60, ...vals) * 1.05;
+  const mo = view === "month";
+  if (!sel || !P.keys.includes(sel)) sel = P.keys.includes(tk) ? tk : P.keys[P.keys.length - 1];
+  const cols = P.keys.map((k, i) => {
+    const d = fromKey(k), m = vals[i];
+    const l = mo ? ((d.getDate() % 5 === 1 || d.getDate() === 1) ? d.getDate() : "") : DOW[d.getDay()].slice(0, 3);
+    return `<div class="col ${k === sel ? "sel" : ""}" data-sel="${k}"><div class="bw"><div class="bar ${cls(m)}" style="height:${m ? m / mx * 100 : 2}%"></div></div><div class="lab">${l}</div></div>`;
+  }).join("");
+  const sm = totalDay(sel), sl = byDay(sel), sd = fromKey(sel);
+  return `<div class="card" style="margin-top:12px"><div class="chart ${mo ? "month" : ""}">
+    <div class="goal" style="bottom:calc(20px + ${(g / mx).toFixed(4)} * 160px)"></div>${cols}</div>
+    <div class="legend"><span style="--c:var(--mint)">Goal met</span><span style="--c:var(--amber)">Close</span><span style="--c:var(--pink)">Short</span></div>
+    <div class="detail"><div><b>${sm ? fmtD(sm) : "No data"}</b><br><span>${DOW[sd.getDay()]}, ${sd.getDate()} ${MON[sd.getMonth()]}${sl.length ? " · " + fmtT(sl[0].bed) + " → " + fmtT(sl[sl.length - 1].wake) : ""}</span></div><span>${sm ? "Score " + score(sm, qualDay(sel)) : ""}</span></div></div>`;
+}
+
+function qualityMix(keys) {
+  const tk = dkey(today());
+  const c = { g: 0, o: 0, l: 0 };
+  keys.forEach(k => { if (k <= tk && totalDay(k)) c[cls(totalDay(k))]++; });
+  const n = c.g + c.o + c.l;
+  if (!n) return `<div class="empty" style="padding:8px">Nothing logged in this period yet.</div>`;
+  const col = { g: "var(--mint)", o: "var(--amber)", l: "var(--pink)" };
+  return `<div class="segbar">${["g", "o", "l"].filter(x => c[x]).map(x => `<i style="width:${c[x] / n * 100}%;background:${col[x]}"></i>`).join("")}</div>
+  <div class="leg2"><div style="--c:var(--mint)">Goal met<b>${c.g}</b></div><div style="--c:var(--amber)">Close<b>${c.o}</b></div><div style="--c:var(--pink)">Short<b>${c.l}</b></div></div>`;
+}
+
+function insightsHTML() {
+  const t = today(), recent = [];
+  for (let i = 0; i < 14; i++) recent.push(...byDay(dkey(addDays(t, -i))));
+  const D = debt(), sd = stdBed(recent), ab = avgBed(recent), aw = avgWake(recent);
+  const days14 = []; for (let i = 0; i < 14; i++) { const m = totalDay(dkey(addDays(t, -i))); if (m) days14.push(m); }
+  const avg = days14.length ? days14.reduce((a, b) => a + b, 0) / days14.length : 0;
+  const all = S.entries.length ? S.entries.reduce((b, e) => mins(e) > mins(b) ? e : b) : null;
+  const tips = [];
+  if (days14.length < 3) tips.push(["📝", "Log at least 3 nights to unlock personalised insights."]);
+  else {
+    if (D.mins > 120) tips.push(["😴", "You’re carrying " + fmtD(D.mins) + " of sleep debt. Add 20–30 minutes to the next few nights — debt clears gradually, not in one night."]);
+    else tips.push(["✅", "Sleep debt is low. Keep this rhythm going."]);
+    if (sd !== null && sd > 60) tips.push(["⏰", "Your bedtime swings by about ±" + Math.round(sd) + " min. A steadier schedule improves sleep efficiency."]);
+    else if (sd !== null) tips.push(["🎯", "Great consistency — bedtime varies only ±" + Math.round(sd) + " min."]);
+    if (avg < goalM() * .9) tips.push(["🌙", "You average " + fmtD(avg) + ", under your " + S.goal + "h goal. Try moving bedtime 30 minutes earlier."]);
+  }
+  tips.push(["📵", "Dim screens and bright lights for the last hour before bed."]);
+  tips.push(["☕", "Avoid caffeine in the 8 hours before you sleep."]);
+  return `<div class="top"><div class="brand">Insights</div></div>
+  <div class="tiles">
+    <div class="tile a"><span>Sleep debt (7d)</span><b>${fmtD(D.mins)}</b><em>${D.nights} nights counted</em></div>
+    <div class="tile b"><span>Bedtime consistency</span><b>${sd === null ? "–" : "±" + Math.round(sd) + "m"}</b><em>${sd === null ? "need 2+ nights" : sd <= 30 ? "excellent" : sd <= 60 ? "okay" : "irregular"}</em></div>
+    <div class="tile c"><span>Avg bedtime</span><b>${ab === null ? "–" : relToClock(ab)}</b><em>last 14 days</em></div>
+    <div class="tile d"><span>Avg wake time</span><b>${aw === null ? "–" : clock(aw)}</b><em>last 14 days</em></div>
+    <div class="tile" style="background:var(--card)"><span>Goal streak</span><b>${streak()} 🔥</b><em>nights in a row</em></div>
+    <div class="tile" style="background:var(--card)"><span>Longest sleep</span><b>${all ? fmtD(mins(all)) : "–"}</b><em>${all ? all.day : "no data"}</em></div>
+  </div>
+  <h2>Tips for you</h2>${tips.map(x => `<div class="tip"><s>${x[0]}</s><div>${x[1]}</div></div>`).join("")}`;
+}
+
+function historyHTML() {
+  const days = [...new Set(S.entries.map(e => e.day))].sort().reverse();
+  let H = `<div class="top"><div class="brand">History</div></div>`;
+  if (!days.length) return H + `<div class="card empty">No sleep logged yet.</div>`;
+  H += `<div class="card list">` + days.map(k => {
+    const d = fromKey(k), m = totalDay(k), c = cls(m), col = { g: "var(--mint)", o: "var(--amber)", l: "var(--pink)" }[c];
+    const l = byDay(k);
+    return `<div class="item"><div class="badge" style="background:${col}">${d.getDate()}</div><div class="t"><b>${fmtD(m)}</b><span>${DOW[d.getDay()]} ${MON[d.getMonth()]} · ${fmtT(l[0].bed)} → ${fmtT(l[l.length - 1].wake)} · ${"★".repeat(Math.round(qualDay(k)))}</span></div><button class="del" data-delday="${k}">🗑</button></div>`;
+  }).join("") + `</div>`;
+  return H;
+}
+
+function settingsHTML() {
+  return `<div class="top"><div class="brand">Settings</div></div>
+  <div class="card"><div class="field"><label>NIGHTLY SLEEP GOAL (HOURS)</label><input id="goal" type="number" min="4" max="12" step="0.5" value="${S.goal}"></div>
+  <button class="go" data-act="savegoal">Save goal</button></div>
+  <h2>Data</h2><div class="card">
+  <button class="ghost" data-act="demo" style="margin-top:0">Load 30 days of demo data</button>
+  <button class="ghost" data-act="export">Export data (JSON)</button>
+  <button class="ghost red" data-act="clear">Delete all data</button></div>
+  <p style="color:var(--muted);font-size:13px;text-align:center;margin-top:20px">All data stays on this phone. Nothing is uploaded.</p>`;
+}
+
+function esc(s) { return String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
+
+/* ---------- render ---------- */
+function render() {
+  $("#app").innerHTML = page === "home" ? homeHTML() : page === "insights" ? insightsHTML() : page === "history" ? historyHTML() : settingsHTML();
+  $("#fab").style.display = page === "settings" ? "none" : "";
+  const T = [["home", "🏠", "Home"], ["history", "🗓", "History"], ["insights", "📊", "Insights"], ["settings", "⚙️", "Settings"]];
+  $("#tabs").innerHTML = T.map(t => `<button class="${page === t[0] ? "on" : ""}" data-go="${t[0]}"><span>${t[1]}</span>${t[2]}</button>`).join("");
+}
+
+/* ---------- log sheet ---------- */
+let q = 4;
+function openLog() {
+  q = 4;
+  const dflt = dkey(today());
+  $("#modal").innerHTML = `<div class="sheet-bg" id="bg"><div class="sheet"><h3>Log sleep</h3>
+  <div class="field"><label>WOKE UP ON</label><input id="f-day" type="date" value="${dflt}" max="${dflt}"></div>
+  <div class="two"><div class="field"><label>BEDTIME</label><input id="f-bed" type="time" value="23:00"></div>
+  <div class="field"><label>WAKE UP</label><input id="f-wake" type="time" value="07:00"></div></div>
+  <div class="preview" id="prev"></div>
+  <div class="field"><label>HOW DID YOU SLEEP?</label><div class="stars" id="stars">${[1, 2, 3, 4, 5].map(i => `<button data-q="${i}" class="${i <= q ? "on" : ""}">⭐</button>`).join("")}</div></div>
+  <div class="field"><label>NOTE (OPTIONAL)</label><input id="f-note" type="text" maxlength="60" placeholder="e.g. late coffee"></div>
+  <button class="go" id="save">Save</button><button class="ghost" id="cancel">Cancel</button></div></div>`;
+  upd();
+}
+function calc() {
+  const day = $("#f-day").value, bed = $("#f-bed").value, wake = $("#f-wake").value;
+  if (!day || !bed || !wake) return null;
+  const wd = fromKey(day), [wh, wm] = wake.split(":").map(Number), [bh, bm] = bed.split(":").map(Number);
+  const w = new Date(wd); w.setHours(wh, wm, 0, 0);
+  const b = new Date(wd); b.setHours(bh, bm, 0, 0);
+  if (b >= w) b.setDate(b.getDate() - 1);
+  return { day, bed: b.getTime(), wake: w.getTime() };
+}
+function upd() { const c = calc(), p = $("#prev"); if (p) p.textContent = c ? "Total sleep: " + fmtD((c.wake - c.bed) / 60000) : ""; }
+
+/* ---------- events ---------- */
+document.addEventListener("input", e => { if (["f-day", "f-bed", "f-wake"].includes(e.target.id)) upd(); });
+document.addEventListener("click", e => {
+  const t = e.target.closest("button, .col, #bg"); if (!t) return;
+  if (t.id === "bg" && e.target === t) { $("#modal").innerHTML = ""; return; }
+  if (t.id === "fab") return openLog();
+  if (t.id === "cancel") { $("#modal").innerHTML = ""; return; }
+  if (t.id === "save") {
+    const c = calc(); if (!c) return;
+    const dur = (c.wake - c.bed) / 60000;
+    if (dur < 10 || dur > 20 * 60) { alert("That doesn’t look right — please check the times."); return; }
+    S.entries.push({ id: Date.now() + "" + Math.floor(Math.random() * 1000), day: c.day, bed: c.bed, wake: c.wake, q, note: $("#f-note").value.trim() });
+    save(); $("#modal").innerHTML = ""; page = "home"; view = "day"; off = 0; sel = null;
+    const d = fromKey(c.day), n = Math.round((d - today()) / 864e5); off = n; render(); return;
+  }
+  if (t.dataset.q) { q = +t.dataset.q; document.querySelectorAll("#stars button").forEach(b => b.classList.toggle("on", +b.dataset.q <= q)); return; }
+  if (t.dataset.go) { page = t.dataset.go; render(); window.scrollTo(0, 0); return; }
+  if (t.dataset.view) { view = t.dataset.view; off = 0; sel = null; render(); return; }
+  if (t.dataset.off) { off = Math.min(0, off + +t.dataset.off); sel = null; render(); return; }
+  if (t.dataset.sel) { sel = t.dataset.sel; render(); return; }
+  if (t.dataset.del) { S.entries = S.entries.filter(x => x.id !== t.dataset.del); save(); render(); return; }
+  if (t.dataset.delday) { if (confirm("Delete this day?")) { S.entries = S.entries.filter(x => x.day !== t.dataset.delday); save(); render(); } return; }
+  const a = t.dataset.act;
+  if (a === "savegoal") { const v = parseFloat($("#goal").value); if (v >= 4 && v <= 12) { S.goal = v; save(); alert("Goal saved"); } return; }
+  if (a === "demo") { demo(); page = "home"; view = "week"; off = 0; render(); return; }
+  if (a === "clear") { if (confirm("Delete ALL sleep data?")) { S.entries = []; save(); render(); } return; }
+  if (a === "export") {
+    const blob = new Blob([JSON.stringify(S, null, 2)], { type: "application/json" });
+    const el = document.createElement("a"); el.href = URL.createObjectURL(blob); el.download = "sleep-data.json"; el.click(); return;
+  }
+});
+
+function demo() {
+  const t = today();
+  for (let i = 29; i >= 0; i--) {
+    const d = addDays(t, -i), k = dkey(d);
+    if (byDay(k).length) continue;
+    const dur = 5.2 + Math.random() * 3.4, bedH = 22.3 + Math.random() * 2.2;
+    const w = new Date(d); w.setHours(0, 0, 0, 0); const wake = new Date(w.getTime() + (bedH + dur - 24) * 3600000);
+    const bed = new Date(wake.getTime() - dur * 3600000);
+    S.entries.push({ id: "d" + i + Math.floor(Math.random() * 999), day: k, bed: bed.getTime(), wake: wake.getTime(), q: 2 + Math.floor(Math.random() * 4), note: "" });
+  }
+  save();
+}
+
+render();
+</script>
+</body>
+</html>
